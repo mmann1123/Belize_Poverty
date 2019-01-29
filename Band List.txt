@@ -1,0 +1,22 @@
+bands: 
+List (10 elements)
+0: 
+"NDVI_median", float, EPSG:4326
+1: 
+"NDVI_min", float, EPSG:4326
+2: 
+"NDVI_max", float, EPSG:4326
+3: 
+"NDVI_mean", float, EPSG:4326
+4: 
+"NDVI_p5", float, EPSG:4326
+5: 
+"NDVI_p25", float, EPSG:4326
+6: 
+"NDVI_p75", float, EPSG:4326
+7: 
+"NDVI_p95", float, EPSG:4326
+8: 
+"NDVI_sum", float, EPSG:4326
+9: 
+"NDVI_stdDev", float, EPSG:4326 , null, true)        
