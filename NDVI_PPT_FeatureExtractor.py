@@ -114,7 +114,7 @@ with rasterio.open(output, 'w', **profile) as dst:
 
 
 
-
+#%%
 #---------------------------------------------------------------------
 
 os.chdir(r'G:\Belize\NDVI')
@@ -212,3 +212,6 @@ with rasterio.open(example) as src:
 # Write to tif, using the same profile as the source
 with rasterio.open(output, 'w', **profile) as dst:
     dst.write(array)
+    
+
+# export outputs with  C:\Users\mmann\Google Drive\Consulting_CUER\IADB Belize 2019\Belize_Poverty\Export_Bands_Data_from_GEE.ipynb
