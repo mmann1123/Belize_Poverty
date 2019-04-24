@@ -12,7 +12,7 @@ import pandas as pd
 import rasterio
 from glob import glob
 from numpy import NaN
-os.chdir(r'C:\Users\mmann\Dropbox\Belize\Geofiles\Time Series Properties')
+os.chdir(r'C:\Users\mmann\Dropbox\Belize\Geofiles\Spatial Features')
 
 #Read the shapefile
 shp = gpd.GeoDataFrame.from_file("../ED_2018_IDB_Shapefiles/ED_2018.shp")
@@ -51,15 +51,8 @@ shp['FIPS'] = shp['Administ_1'].str[-1] + shp['Area_clean'].replace(
                           shp['ED_2018'].apply(lambda x: '{0:0>5}'.format(x))
 
 shp.FIPS.fillna(0,inplace=True)
-
-# counts 
-shp_count = shp.FIPS.value_counts().sort_values()
-
-#shp.to_file("../ED_2018_IDB_Shapefiles/ED_2018_FIPS.shp")
-#shp.to_file(u"R:\Engstrom_Research\GHANA\Belize\ED_2018_IDB/ED_2018_FIPS_mike.shp")
-
-
  
+
 #%% merge values for  31200120
 
 TF =  shp.FIPS != '31200120' 
@@ -71,8 +64,9 @@ shp.sort_values('OBJECTID', inplace=True)
 shp.index = shp.OBJECTID
 shp.drop(['OBJECTID'],axis=1,inplace=True)
  
-#shp.to_file("../ED_2018_IDB_Shapefiles/ED_2018_FIPS_dissolve.shp")
-#shp.to_file(u"R:\Engstrom_Research\GHANA\Belize\ED_2018_IDB/ED_2018_FIPS_mike_dissolve.shp")
+shp.to_file("../ED_2018_IDB_Shapefiles/ED_2018_FIPS_dissolve.shp")
+shp.to_file(u"R:\Engstrom_Research\GHANA\Belize\ED_2018_IDB/ED_2018_FIPS_mike_dissolve.shp")
+
 
 #%% check that these match ryans FIPS 
 #shp2 = gpd.GeoDataFrame.from_file(u"R:\Engstrom_Research\GHANA\Belize\ED_2018_IDB/ED_2018_FIPS.shp",  mode= 'r',encoding ='UTF-8'  )
@@ -89,7 +83,7 @@ shp.drop(['OBJECTID'],axis=1,inplace=True)
 rasters = {}
 
 # add files to dictionary
-for entry in glob(r'./*.tif'):
+for entry in glob(r'./*/*.tif'):
     name = os.path.basename(entry).split('.')[0]
     rasters[name] = entry
     
@@ -103,21 +97,22 @@ shp_cols =shp.drop(['geometry'],axis=1)
 
 # copy metrics
 spfeas_stats = shp_cols.copy()
-
+ 
 #%%
+
 # calculate
 for rast, path in rasters.items():
-
+    print(rast)
     shp = shp.to_crs(rasterio.open(path).crs)
     
     stats = zs(shp, path, stats=metrics,all_touched=True,nodata=-9999)
     new_colnames = ["{}_{}".format(rast, metric) for metric in metrics]
     df = pd.DataFrame(stats)
-    df2 = df.rename(columns=dict(zip(metrics, new_colnames)))
-    spfeas_stats =spfeas_stats.join(df2)
+    df.rename(columns=dict(zip(metrics, new_colnames)),inplace=True)
+    spfeas_stats =spfeas_stats.join(df)
 
 # Save
-spfeas_stats.to_csv("./stats_all.csv")
+spfeas_stats.to_csv("./spfeas_stats_all.csv")
 
 
 
