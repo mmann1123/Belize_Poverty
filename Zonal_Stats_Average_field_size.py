@@ -27,11 +27,22 @@ bound = bound.to_crs({'init': 'epsg:32616'})
 
 union = gpd.overlay(shp, bound, how='union')
 
+#%% save output
+
+union.to_file("./Field Boundaries/seg_mosaic_admin_union.shp")
+
 #%% calculate area in meters 
 
 union["area"] = union['geometry'].area 
 
+#%%
+# drop all DN not equal to 1
+
+union = union.loc[union.DN == 1]
+
 #%% calculate the mean  parcel area by admin code 
 
-union_stats = union.groupby([""]).agg({'area': ['min','mean','max']})
+union_stats = union.groupby(["FIPS"]).agg({'area': ['min','mean','max']})
 
+
+union_stats.to_csv('./Field Boundaries/FieldStatsbyFIPS.csv')

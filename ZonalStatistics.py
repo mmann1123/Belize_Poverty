@@ -21,15 +21,15 @@ in_path = r'.'
 
 
 #%% Generate FIPS code
-#1 - district code based on last digit of administ_1
-#2-3 - LOCALITY -> Area  anything w. rural is 12
-#4-8 - ED_2018 in five digits
+#digit 1 - district code based on last digit of administ_1
+#digits 2-3 - LOCALITY -> Area  anything w. rural is 12
+#digits 4-8 - ED_2018 in five digits
 
  
 # deal with special conditions
 shp['Area_clean'] = shp['Area']
 shp.loc[shp.Area == 'Belize City','Area_clean'] = shp.loc[shp.Area == 'Belize City','CTV_2018']
-shp['Area_clean'].map(lambda x: x.rstrip('City'))
+shp['Area_clean'].map(lambda x: x.rstrip('City') if(x is not None) else None )
 shp.loc[shp.Area == 'Benque','Area_clean'] = 'Benque Viejo'
 shp['Area_clean'].replace(['Corozal'],['Corozal Town'],inplace=True)
 shp['Area_clean'].replace(['Dangriga Town'],['Dangriga'],inplace=True)
@@ -38,7 +38,7 @@ shp['Area_clean'].replace(['Belize City Northside'],['Belize City North Side'],i
 shp['Area_clean'].replace(['Belize City Southside'],['Belize City South Side'],inplace=True)
 shp['Area_clean'].replace(['San_Pedro'],['San Pedro'],inplace=True)
 shp['Area_clean'].replace(['Cayo Rural'],['Rural'],inplace=True)
-
+ 
 # convert any rural to rural
 shp.loc[shp.Urban_Rura == 'Rural', 'Area_clean'] = 'Rural'
 
@@ -60,7 +60,7 @@ shp_count = shp.FIPS.value_counts().sort_values()
 
 
  
-#%% merge values for  31200120
+#%% merge values for  31200120 island with two areas
 
 TF =  shp.FIPS != '31200120' 
 shp['group'] = TF.mul(pd.Series(range(0,len(shp))), axis=0) # create unique group for all but 31200120
@@ -79,7 +79,7 @@ shp.drop(['OBJECTID'],axis=1,inplace=True)
 #shp2_count = shp2.FIPS.value_counts().sort_values()
 #print(shp_count.index.equals(shp_count.index))
 
-
+len(shp.FIPS.unique())
 
 #%%
 # Save the images in one folder and create
