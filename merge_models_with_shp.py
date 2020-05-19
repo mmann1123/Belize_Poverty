@@ -22,11 +22,12 @@ shp.crs.to_epsg()
 shp = shp[['FIPS','fips_1','X','geometry']]
 
 #New models
-models = pd.read_csv('./CensusEDPreds_GroupCV.csv', index_col=0)
-
+models = pd.read_csv('./CensusEDPreds_GroupCV_4_21_20.csv', index_col=0)
+#%%
 # exponentiate income columns
-models[['Ridge_Preds','ENet_Preds','RF_Preds','XGB_Preds','Preds_Combined']] = models[['Ridge_Preds','ENet_Preds','RF_Preds','XGB_Preds','Preds_Combined']].apply(np.exp,axis=1)
-
+models[['Ridge_Preds','ENet_Preds','RF_Preds','XGB_Preds','Preds_Combined']] = \
+        models[['Ridge_Preds','ENet_Preds','RF_Preds','XGB_Preds','Preds_Combined']].apply(np.exp,axis=1)
+#%%
 # merge in models
 shp = shp.astype({'FIPS': 'int64'})
 shp = shp.merge(models, left_on='FIPS', right_on='fips', how='left' )
